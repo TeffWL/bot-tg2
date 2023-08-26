@@ -1,0 +1,361 @@
+const { Scenes, Markup } = require('telegraf')
+
+
+const word_check_2 = new Scenes.WizardScene(
+    'Scene_word_check_2',
+    async (ctx) => {
+        const keyboard = Markup.inlineKeyboard([
+            Markup.button.callback('Начнем!', 'word_check2')
+        ]);
+        await ctx.replyWithHTML('Проверим твои знания', keyboard);
+        return ctx.wizard.next()
+    },
+)
+
+
+// функция проверки слов
+const questionOrder = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+
+async function sendNextWord(ctx, wordIndex) {
+  let word;
+  let questionIndex = questionOrder[wordIndex - 1];
+  // ... other variables declaration
+
+  console.log(`Отправка следующего слова: ${wordIndex}`);
+
+  switch (questionIndex) {
+      case 1: 
+        word = "Как правильно перевести\nЯ не знаю";
+        correctBtn = { text: "I don't know", callback_data: "word_check_ang-rus_n1" };
+        wrongBtns = [
+          { text: "I'm uncertain.", callback_data: "closeBtn1" },
+          { text: "Unsure about that.", callback_data: "closeBtn1" },
+          { text: "It eludes me.", callback_data: "closeBtn1" },
+        ]
+        break;
+      case 2: // анг рус 
+        word = "А как перевести\nМожет быть";
+        correctBtn = { text: "Maybe", callback_data: "word_check_ang-rus_n2" };
+        wrongBtns = [
+          { text: "Perhaps", callback_data: "closeBtn2" },
+          { text: "It's possible", callback_data: "closeBtn2" },
+          { text: "Could be", callback_data: "closeBtn2" },
+        ];
+        
+        
+        break;
+        case 3: // русс анг  
+        word = "Как правильно перевести\nI'm sorry, I didn't catch that";
+        correctBtn = { text: "Простите,я не расслышал", callback_data: "word_check_ang-rus_n3" };
+        wrongBtns = [
+          { text: "Прошу прощения,\nя не понял.", callback_data: "closeBtn3" },
+          { text: "Мне жаль, я не услышал.", callback_data: "closeBtn3" },
+          { text: "Извините, я не разобрал.", callback_data: "closeBtn3" },
+        ];
+        break;
+        case 4: 
+        word = "Как правильно перевести\nНе могли бы вы повторить, пожалуйста?";
+        correctBtn = { text: "Could you repeat that, please?", callback_data: "word_check_ang-rus_n4" };
+        wrongBtns = [
+            { text: "Would you mind saying that again?", callback_data: "closeBtn4" },
+            { text: "Can you rephrase that, I didn't catch it.", callback_data: "closeBtn4" },
+            { text: "Is it possible for you to repeat what you just said?", callback_data: "closeBtn4" },
+        ];
+        break;
+
+        case 5: //аудио 1
+        const idontknow = 'sound/training_2/idontknow.mp3';
+        await ctx.replyWithHTML("Послушайте аудио и напишите услышанное слово на английском");
+        await ctx.replyWithVoice({ source: idontknow,  duration: 1, performer: '', title: '' });       
+        ctx.wizard.state.waitForUserAnswerAfterAudio = true;
+        ctx.wizard.state.currentWordIndex = 5; // ПЕРЕХОД
+        break;
+
+
+          case 6: //рус - анг поменять
+            word = "Как бы вы перевели\nI don't know";
+            correctBtn = { text: "Я не знаю", callback_data: "word_check_ang-rus_n5" };
+            wrongBtns = [
+              { text: "Я не уверен.", callback_data: "closeBtn5" },
+              { text: "Не уверен в этом.", callback_data: "closeBtn5" },
+              { text: "Это ускользает от меня.", callback_data: "closeBtn5" },
+            ];
+            break;
+
+            case 7: //аудио 2 
+            const maybe = 'sound/training_2/maybe.mp3';
+            await ctx.replyWithHTML("Послушайте аудио и напишите услышанное слово на английском");
+            await ctx.replyWithVoice({ source: maybe,  duration: 1, performer: '', title: '' });       
+            ctx.wizard.state.waitForUserAnswerAfterAudio = true;
+            ctx.wizard.state.currentWordIndex = 9; // ПЕРЕХОД
+            break;
+
+
+            case 8: // анг рус  Доброе утро - Good morning
+              word = "А как правильно перевести\nMaybe";
+              correctBtn = { text: "Может быть", callback_data: "word_check_ang-rus_n6" };
+              wrongBtns = [
+                { text: "Возможно", callback_data: "closeBtn6" },
+                { text: "По всей видимости", callback_data: "closeBtn6" },
+                { text: "Вероятно", callback_data: "closeBtn6" },
+              ];
+              break;
+
+
+              case 9: // рус анг  Что нового? - What’s new?
+              word = "А как сказать на английском\nПростите, я не расслышал";
+              correctBtn = { text: "I'm sorry, I didn't catch that", callback_data: "word_check_ang-rus_n7" };
+                wrongBtns = [
+                  { text: "Apologies, I didn't hear you.", callback_data: "closeBtn7" },
+                  { text: "Excuse me, I missed that.", callback_data: "closeBtn7" },
+                  { text: "My apologies, I didn't understand what you said.", callback_data: "closeBtn7" },
+                ];
+                break;
+
+                case 10: //аудио 3
+                const ImsorryIdidntcatchthat = 'sound/training_2/ImsorryIdidntcatchthat.mp3';
+                await ctx.replyWithHTML("Послушайте аудио и напишите услышанное слово на английском");
+                await ctx.replyWithVoice({ source: ImsorryIdidntcatchthat,  duration: 1, performer: '', title: '' });       
+                ctx.wizard.state.waitForUserAnswerAfterAudio = true;
+                ctx.wizard.state.currentWordIndex = 10; // ПЕРЕХОД
+                break;
+
+                case 11: //аудио 4
+                const sound_2_4 = 'sound/training_2/sound_2_4.mp3';
+                await ctx.replyWithHTML("Послушайте аудио и напишите услышанное слово на английском");
+                await ctx.replyWithVoice({ source: sound_2_4,  duration: 1, performer: '', title: '' });       
+                ctx.wizard.state.waitForUserAnswerAfterAudio = true;
+                ctx.wizard.state.currentWordIndex = 11; // ПЕРЕХОД
+                break;
+
+                case 12: // анг рус Как дела?-  How are you? -
+                word = "Сможешь перевести\nCould you repeat that, please?";
+                correctBtn = { text: "Не могли бы вы повторить, пожалуйста?", callback_data: "word_check_ang-rus_n8" };
+                wrongBtns = [
+                  { text: "Можете ли вы повторить это?", callback_data: "closeBtn8" },
+                  { text: "Пожалуйста, скажите еще раз.", callback_data: "closeBtn8" },
+                  { text: "Прошу повторить, если можно.", callback_data: "closeBtn8" },
+                ];
+                break;
+  }
+
+  
+
+  word_check_2.on('message', async ctx => {
+    if (ctx.wizard.state.waitForUserAnswerAfterAudio) {
+      await processUserAudioAnswer(ctx);
+      ctx.wizard.state.waitForUserAnswerAfterAudio = false;
+      ctx.wizard.state.currentWordIndex++;
+      ctx.scene.reenter(); //Добавьте этот вызов здесь
+    } else {
+      // Ваши обрабатываемые событий здесь
+    }
+  });
+
+
+// 1. I don't know - Я не знаю
+// 2. Maybe - Может быть
+// 3. I'm sorry, I didn't catch that - Простите, я не расслышал
+// 4. Could you repeat that, please? - Не могли бы вы повторить, пожалуйста?
+  
+async function processUserAudioAnswer(ctx) {
+  const wordIndex = ctx.wizard.state.currentWordIndex;
+  const userMessage = ctx.message.text.trim().toLowerCase();
+
+  let correctMessage;
+  let correctMessage2;
+  let correctMessage3;
+  if (wordIndex === 5) {
+    correctMessage = "i don't know";
+    correctMessage2 = "I don't know";
+    correctMessage3 = "I don`t know";
+  } else if (wordIndex === 7) {
+    correctMessage = "maybe";
+    correctMessage2 = "Maybe";
+  } else if (wordIndex === 10) {
+    correctMessage = "i'm sorry, i didn't catch that";
+    correctMessage2 = "I'm sorry, I didn't catch that";
+    correctMessage3 = "I'm sorry i didn't catch that";
+  } else if (wordIndex === 11) {
+    correctMessage = "could you repeat that, please?";
+    correctMessage2 = "Could you repeat that, please?";
+    correctMessage3 = "Could you repeat that please?";
+  }
+
+  if (userMessage === correctMessage) {
+    await ctx.reply("Правильно! 👍");
+  } else {
+    await ctx.reply(`Неправильно. Правильный ответ: ${correctMessage2} 👍`);
+  }
+
+  ctx.wizard.state.waitForUserAnswerAfterAudio = false;
+
+  
+    // Упорядочьте фрагмент с обновлением текущего индекса слова перед отправкой следующего слова.
+    ctx.wizard.state.currentWordIndex++;
+    sendNextWord(ctx, ctx.wizard.state.currentWordIndex);
+    }
+  
+
+  // удаление кнопок после нажатия
+  const btns = [correctBtn, ...wrongBtns].sort(() => Math.random() - 0.5);
+  function groupInColumn(array) {
+    return array.map(item => [item]);
+  }
+
+  const replyMarkup = {
+  inline_keyboard: groupInColumn(btns),
+};
+
+  ctx.wizard.state.currentWordIndex = wordIndex;
+
+  if (wordIndex !== 5 && wordIndex !== 7 && wordIndex !== 10 && wordIndex !== 11) {
+    await ctx.reply(word, { reply_markup: replyMarkup });
+  }
+}
+
+
+word_check_2.action('word_check2', async (ctx) => {
+  await sendNextWord(ctx, 1); // Старт с первого слова
+});
+
+const checks = [
+  {
+    action: "word_check_ang-rus_n1",
+    answer: "I don't know",
+    correctBtnText: "I don't know ✅",
+    incorrectBtnText: "❌",
+    nextWordIndex: 2,
+  },
+  {
+    action: "word_check_ang-rus_n2",
+    answer: "Maybe",
+    correctBtnText: "Maybe ✅",
+    incorrectBtnText: "❌",
+    nextWordIndex: 3,
+  },
+  {
+    action: "word_check_ang-rus_n3",
+    answer: "Простите, я не расслышал",
+    correctBtnText: "Простите, я не расслышал ✅",
+    incorrectBtnText: "❌",
+    nextWordIndex: 5,
+  },
+  {
+    action: "word_check_ang-rus_n4",
+    answer: "Could you repeat that, please?",
+    correctBtnText: "Could you repeat that, please? ✅",
+    incorrectBtnText: "❌",
+    nextWordIndex: 6,
+  },
+  {
+    action: "word_check_ang-rus_n5",
+    answer: "Я не знаю",
+    correctBtnText: "Я не знаю ✅",
+    incorrectBtnText: "❌",
+    nextWordIndex: 8,
+  },
+  {
+    action: "word_check_ang-rus_n6",
+    answer: "Может быть",
+    correctBtnText: "Может быть ✅",
+    incorrectBtnText: "❌",
+    nextWordIndex: 9,
+  },
+  {
+    action: "word_check_ang-rus_n7",
+    answer: "I'm sorry, I didn't catch that",
+    correctBtnText: "I'm sorry, I didn't catch that ✅",
+    incorrectBtnText: "❌",
+    nextWordIndex: 10,
+  },
+    {
+      action: "word_check_ang-rus_n8",
+      answer: "Не могли бы вы повторить, пожалуйста?",
+      correctBtnText: "Не могли бы вы повторить, пожалуйста? ✅",
+      incorrectBtnText: "❌",
+      nextWordIndex: null,
+    },
+  ]
+word_check_2.action(new RegExp(checks.map((check) => check.action).join('|')), async (ctx) => {
+  const check = checks.find((check) => check.action === ctx.callbackQuery.data);
+
+  const inline_keyboard = [
+    [
+      {
+        text: check.correctBtnText,
+        callback_data: `correct-${check.action}`,
+      },
+    ],
+  ];
+
+  await ctx.editMessageReplyMarkup({ inline_keyboard });
+
+  if (check.nextWordIndex !== null) {
+    await sendNextWord(ctx, check.nextWordIndex);
+  } else if (ctx.session.sentDelayedMessagesCount > 1 || (check.nextWordIndex === null && check.answer === "Как дела?")) {
+    return handleTestEnd2(ctx);
+  } else {
+    return ctx.scene.enter("temporaryScene_2");
+  }
+});
+
+word_check_2.action(/correct-/, async (ctx) => {
+  await ctx.answerCbQuery();
+  
+});
+
+word_check_2.action(/closeBtn(\d)/, async (ctx) => {
+  const checkIndex = parseInt(ctx.match[1]) - 1;
+  const check = checks[checkIndex];
+
+  if (check.answer) {
+    await ctx.reply(`Правильно будет ${check.answer}.`);
+  } 
+
+  const inline_keyboard = [
+    [
+      {
+        text: check.incorrectBtnText,
+        callback_data: ctx.callbackQuery.data,
+      },
+    ],
+  ];
+
+  await ctx.editMessageReplyMarkup({ inline_keyboard });
+
+  if (check.nextWordIndex !== null) {
+    await sendNextWord(ctx, check.nextWordIndex);
+  } else {
+    return handleTestEnd2(ctx);
+  }
+});
+
+
+
+async function handleTestEnd2(ctx) {
+  // Выведите разные сообщения основываясь на значении сессии `sentDelayedMessagesCount`
+  if (!ctx.session.sentDelayedMessagesCount) {
+    ctx.session.sentDelayedMessagesCount = 0;
+  }
+  
+  if (ctx.session.sentDelayedMessagesCount === 0) {
+    await ctx.reply('Поздравляем!\nВы прошли урок по запоминанию фраз💫\nДо встречи в этом чате!');
+    await ctx.replyWithHTML('Вот, что вы прошли сегодня');
+    await ctx.replyWithHTML("#phrases\nI don't know - Я не знаю\nMaybe - Может быть\nI'm sorry, I didn't catch that - Простите, я не расслышал\nCould you repeat that, please? - Не могли бы вы повторить, пожалуйста?");
+
+    ctx.session.sentDelayedMessagesCount++;
+  } else if (ctx.session.sentDelayedMessagesCount === 1) {
+    await ctx.reply('- Увидимся завтра');
+    ctx.session.sentDelayedMessagesCount++;
+  } else if (ctx.session.sentDelayedMessagesCount === 2) {
+    await ctx.reply('Новый день новые фразы');
+    ctx.session.sentDelayedMessagesCount++;
+    return ctx.scene.enter('menuScene');
+  } else {
+    await ctx.reply('Тест завершен.'); // Если ни одно условие не удовлетворяет
+  }
+  return ctx.scene.enter('temporaryScene_2');
+}
+
+module.exports = word_check_2;

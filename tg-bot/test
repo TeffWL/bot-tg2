@@ -1,0 +1,268 @@
+// // require the necessary modules
+// const { Telegraf, Scenes: { BaseScene, Stage }, Markup } = require('telegraf');
+
+// // create an instance of the Telegraf bot
+// const bot = new Telegraf(process.env.BOT_TOKEN);
+
+// // create a new stage
+// const stage = new Stage();
+
+// // create a new scene
+// const wordCheckScene = new BaseScene('word_check_scene');
+
+// // define the questions array
+// const questionsArray = [
+//   {
+//     questionIndex: 1,
+//     text: "Как правильно перевести\nЯ не знаю",
+//     correctAnswer: "I don't know",
+//     incorrectAnswers: [
+//       "I'm uncertain.",
+//       "Unsure about that.",
+//       "It eludes me.",
+//     ],
+//     action: "word_check_ang-rus_n1",
+//     nextWordIndex: 2,
+//   },
+//   {
+//     questionIndex: 2,
+//     text: "А как перевести\nМожет быть",
+//     correctAnswer: "Maybe",
+//     incorrectAnswers: [
+//       "Perhaps",
+//       "It's possible",
+//       "Could be",
+//     ],
+//     action: "word_check_ang-rus_n2",
+//     nextWordIndex: 3,
+//   },
+//   // add more questions here
+//   {
+//     questionIndex: 10,
+//     text: "Как переводится\nЭкономить время",
+//     correctAnswer: "Save time",
+//     incorrectAnswers: [
+//       "Economize time",
+//       "Efficient time use",
+//       "Effective use of time",
+//     ],
+//     action: "word_check_ang-rus_n10",
+//     nextWordIndex: null,
+//   },
+// ];
+
+// // create a variable to keep track of the current question
+// let currentQuestionIndex = 0;
+
+// // create the function to send the next word
+// function sendNextWord(ctx, nextWordIndex) {
+//   const question = questionsArray.find((q) => q.questionIndex === nextWordIndex);
+
+//   const incorrectBtnOptions = question.incorrectAnswers.map((answer) => Markup.callbackButton(answer, `closeBtn${question.questionIndex}`));
+//   const correctBtnText = `${question.correctAnswer} ✅`;
+//   const incorrectBtnText = "❌";
+//   const inlineKeyboard = Markup.inlineKeyboard([
+//     [Markup.callbackButton(correctBtnText, `correct-${question.action}`)],
+//     ...Markup.callbackButton(incorrectBtnOptions, { columns: 2 }),
+//     [Markup.callbackButton(incorrectBtnText, `closeBtn${question.questionIndex}`)],
+//   ]);
+
+//   return ctx.replyWithHTML(`<b>${question.text}</b>`, inlineKeyboard);
+// }
+
+// // create the function to handle the end of the test
+// function handleTestEnd(ctx) {
+//   return ctx.reply("Тест завершен. Спасибо за участие!");
+// }
+
+// // create the word check scene and add it to the stage
+// wordCheckScene.enter(async (ctx) => {
+//   currentQuestionIndex = 0;
+
+//   return ctx.replyWithHTML("Привет! Этот тест проверит твои знания английского языка. Готов начать?", Markup.inlineKeyboard([[Markup.callbackButton("Начать", "start")]]));
+// });
+
+// wordCheckScene.action('start', async (ctx) => {
+//   await ctx.answerCbQuery();
+
+//   return sendNextWord(ctx, currentQuestionIndex + 1);
+// });
+
+// wordCheckScene.action(new RegExp(questionsArray.map((q) => q.action).join('|')), async (ctx) => {
+//   const question = questionsArray.find((q) => q.action === ctx.callbackQuery.data.replace('-rus', ''));
+
+//   const inlineKeyboard = Markup.inlineKeyboard([
+//     [Markup.callbackButton(`${question.correctAnswer} ✅`, `correct-${question.action}`)],
+//   ]);
+
+//   await ctx.editMessageReplyMarkup(inlineKeyboard);
+
+//   if (question.nextWordIndex !== null) {
+//     currentQuestionIndex = question.questionIndex - 1;
+
+//     return sendNextWord(ctx, question.nextWordIndex);
+//   } else {
+//     return handleTestEnd(ctx);
+//   }
+// });
+
+// wordCheckScene.action(/correct-/, async (ctx) => {
+//   await ctx.answerCbQuery();
+// });
+
+// wordCheckScene.action(/closeBtn(\d)/, async (ctx) => {
+//   const question = questionsArray.find((q) => q.questionIndex === currentQuestionIndex + 1);
+
+//   if (question.correctAnswer) {
+//     await ctx.reply(`Правильно будет ${question.correctAnswer}.`);
+//   }
+
+//   const incorrectAnswers = question.incorrectAnswers.map((answer) => Markup.callbackButton(answer, `closeBtn${question.questionIndex}`));
+//   const inlineKeyboard = Markup.inlineKeyboard([
+//     [Markup.callbackButton(`${question.correctAnswer} ✅`, `correct-${question.action}`)],
+//     ...Markup.callbackButton(incorrectAnswers, { columns: 2 }),
+//     [Markup.callbackButton("❌", `closeBtn${question.questionIndex}`)],
+//   ]);
+
+//   await ctx.editMessageReplyMarkup(inlineKeyboard);
+// });
+
+// // add the scene to the stage
+// stage.register(wordCheckScene);
+
+// // add the stage to the bot
+// bot.use(stage.middleware());
+
+// // set up the bot's command handler
+// bot.command('start', (ctx) => {
+//   ctx.scene.enter('word_check_scene');
+// });
+
+// // start the bot
+// bot.launch();
+
+
+
+
+
+// //
+
+
+// // функция проверки слов
+// const questionOrder = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+
+// async function sendNextWord(ctx, wordIndex) {
+//   let word;
+//   let questionIndex = questionOrder[wordIndex - 1];
+//   // ... other variables declaration
+
+//   console.log(`Отправка следующего слова: ${wordIndex}`);
+
+//   switch (questionIndex) {
+//       case 1: 
+//         word = "Как правильно перевести\nЯ не знаю";
+//         correctBtn = { text: "I don't know", callback_data: "word_check_ang-rus_n1" };
+//         wrongBtns = [
+//           { text: "I'm uncertain.", callback_data: "closeBtn1" },
+//           { text: "Unsure about that.", callback_data: "closeBtn1" },
+//           { text: "It eludes me.", callback_data: "closeBtn1" },
+//         ]
+//         break;
+//       case 2: // анг рус 
+//         word = "А как перевести\nМожет быть";
+//         correctBtn = { text: "Maybe", callback_data: "word_check_ang-rus_n2" };
+//         wrongBtns = [
+//           { text: "Perhaps", callback_data: "closeBtn2" },
+//           { text: "It's possible", callback_data: "closeBtn2" },
+//           { text: "Could be", callback_data: "closeBtn2" },
+//         ];
+        
+//         break;
+//         case 3: // русс анг  
+//         word = "Как правильно перевести\nI'm sorry, I didn't catch that";
+//         correctBtn = { text: "Простите,я не расслышал", callback_data: "word_check_ang-rus_n3" };
+//         wrongBtns = [
+//           { text: "Прошу прощения,\nя не понял.", callback_data: "closeBtn3" },
+//           { text: "Мне жаль, я не услышал.", callback_data: "closeBtn3" },
+//           { text: "Извините, я не разобрал.", callback_data: "closeBtn3" },
+//         ];
+//         break;
+//         case 4: 
+//         word = "Как правильно перевести\nНе могли бы вы повторить, пожалуйста?";
+//         correctBtn = { text: "Could you repeat that, please?", callback_data: "word_check_ang-rus_n4" };
+//         wrongBtns = [
+//             { text: "Would you mind saying that again?", callback_data: "closeBtn4" },
+//             { text: "Can you rephrase that, I didn't catch it.", callback_data: "closeBtn4" },
+//             { text: "Is it possible for you to repeat what you just said?", callback_data: "closeBtn4" },
+//         ];
+//         break;
+//           case 5: //рус - анг поменять
+//             word = "Как бы вы перевели\nI don't know";
+//             correctBtn = { text: "Я не знаю", callback_data: "word_check_ang-rus_n5" };
+//             wrongBtns = [
+//               { text: "Я не уверен.", callback_data: "closeBtn5" },
+//               { text: "Не уверен в этом.", callback_data: "closeBtn5" },
+//               { text: "Это ускользает от меня.", callback_data: "closeBtn5" },
+//             ];
+//             break;
+//             case 6: // анг рус  Доброе утро - Good morning
+//               word = "А как правильно перевести\nMaybe";
+//               correctBtn = { text: "Может быть", callback_data: "word_check_ang-rus_n6" };
+//               wrongBtns = [
+//                 { text: "Возможно", callback_data: "closeBtn6" },
+//                 { text: "По всей видимости", callback_data: "closeBtn6" },
+//                 { text: "Вероятно", callback_data: "closeBtn6" },
+//               ];
+//               break;
+//               case 7: // рус анг  Что нового? - What’s new?
+//               word = "А как сказать на английском\nПростите, я не расслышал";
+//               correctBtn = { text: "I'm sorry, I didn't catch that", callback_data: "word_check_ang-rus_n7" };
+//                 wrongBtns = [
+//                   { text: "Apologies, I didn't hear you.", callback_data: "closeBtn7" },
+//                   { text: "Excuse me, I missed that.", callback_data: "closeBtn7" },
+//                   { text: "My apologies, I didn't understand what you said.", callback_data: "closeBtn7" },
+//                 ];
+//                 break;
+          
+//                 case 8: //аудио 1 
+//                 const idontknow = 'sound/training_2/idontknow.mp3';
+//                 await ctx.replyWithHTML("Послушайте аудио и напишите услышанное слово на английском");
+//                 await ctx.replyWithVoice({ source: idontknow,  duration: 1, performer: '', title: '' });       
+//                 ctx.wizard.state.waitForUserAnswerAfterAudio = true;
+//                 ctx.wizard.state.currentWordIndex = 8; // ПЕРЕХОД
+//                 break;
+
+//                 case 9: //аудио 2 
+//                 const maybe = 'sound/training_2/maybe.mp3';
+//                 await ctx.replyWithHTML("Послушайте аудио и напишите услышанное слово на английском");
+//                 await ctx.replyWithVoice({ source: maybe,  duration: 1, performer: '', title: '' });       
+//                 ctx.wizard.state.waitForUserAnswerAfterAudio = true;
+//                 ctx.wizard.state.currentWordIndex = 9; // ПЕРЕХОД
+//                 break;
+
+//                 case 10: //аудио 3
+//                 const ImsorryIdidntcatchthat = 'sound/training_2/ImsorryIdidntcatchthat.mp3';
+//                 await ctx.replyWithHTML("Послушайте аудио и напишите услышанное слово на английском");
+//                 await ctx.replyWithVoice({ source: ImsorryIdidntcatchthat,  duration: 1, performer: '', title: '' });       
+//                 ctx.wizard.state.waitForUserAnswerAfterAudio = true;
+//                 ctx.wizard.state.currentWordIndex = 10; // ПЕРЕХОД
+//                 break;
+
+//                 case 11: //аудио 4
+//                 const sound_2_4 = 'sound/training_2/sound_2_4.mp3';
+//                 await ctx.replyWithHTML("Послушайте аудио и напишите услышанное слово на английском");
+//                 await ctx.replyWithVoice({ source: sound_2_4,  duration: 1, performer: '', title: '' });       
+//                 ctx.wizard.state.waitForUserAnswerAfterAudio = true;
+//                 ctx.wizard.state.currentWordIndex = 11; // ПЕРЕХОД
+//                 break;
+
+//                 case 12: // анг рус Как дела?-  How are you? -
+//                 word = "Сможешь перевести\nCould you repeat that, please?";
+//                 correctBtn = { text: "Не могли бы вы повторить, пожалуйста?", callback_data: "word_check_ang-rus_n8" };
+//                 wrongBtns = [
+//                   { text: "Можете ли вы повторить это?", callback_data: "closeBtn8" },
+//                   { text: "Пожалуйста, скажите еще раз.", callback_data: "closeBtn8" },
+//                   { text: "Прошу повторить, если можно.", callback_data: "closeBtn8" },
+//                 ];
+//                 break;
+//   }
